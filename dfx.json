@@ -1,0 +1,17 @@
+{
+  "canisters": {
+    "dip721-canister": {
+      "candid": "src/dip721-canister.did",
+      "package": "dip721-canister",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

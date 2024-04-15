@@ -1,0 +1,57 @@
+name: build-test
+
+on:
+  pull_request:
+    paths-ignore:
+      - "*.md"
+  push:
+    paths-ignore:
+      - "*.md"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt install -y libssl-dev pkg-config jq wget && \
+          wget -O /tmp/cargo-make.zip https://github.com/sagiegurari/cargo-make/releases/download/0.37.5/cargo-make-v0.37.5-x86_64-unknown-linux-gnu.zip && \
+          sudo unzip /tmp/cargo-make.zip -d /tmp && \
+          sudo mv /tmp/cargo-make-v0.37.5-x86_64-unknown-linux-gnu/cargo-make $HOME/.cargo/bin/cargo-make && \
+          sudo chmod +x $HOME/.cargo/bin/cargo-make && \
+          wget -O pocket-ic.gz https://github.com/dfinity/pocketic/releases/download/3.0.0/pocket-ic-x86_64-linux.gz && \
+          gzip -d pocket-ic.gz && \
+          chmod +x pocket-ic && \
+          mv pocket-ic ./integration-tests/pocket-ic
+      - name: Install dfx
+        run: |
+          DFXVM_INIT_YES=1 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+          sudo cp $HOME/.local/share/dfx/bin/* /usr/bin
+          dfx extension install sns
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+          target: wasm32-unknown-unknown
+      - name: Set Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: build
+        run: cargo make dfx-setup && cargo make dfx-build
+      - name: Unit Tests
+        run: cargo make test
+      - name: Deploy local
+        run: cargo make deploy-local
+      - name: Integration Tests
+        run: cargo make integration-tests
+      - name: Format
+        run: cargo make check-format
+      - name: Lint
+        run: cargo make lint
