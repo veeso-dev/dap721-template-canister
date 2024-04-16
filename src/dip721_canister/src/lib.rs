@@ -37,224 +37,224 @@ pub fn set_token_property(
 
 #[query]
 #[candid_method(query)]
-pub fn metadata() -> dip721_rs::Metadata {
-    App::metadata()
+pub fn dip721_metadata() -> dip721_rs::Metadata {
+    App::dip721_metadata()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn stats() -> dip721_rs::Stats {
-    App::stats()
+pub fn dip721_stats() -> dip721_rs::Stats {
+    App::dip721_stats()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn logo() -> Option<String> {
-    App::logo()
+pub fn dip721_logo() -> Option<String> {
+    App::dip721_logo()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn set_logo(logo: String) {
-    App::set_logo(logo)
+pub fn dip721_set_logo(logo: String) {
+    App::dip721_set_logo(logo)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn name() -> Option<String> {
-    App::name()
+pub fn dip721_name() -> Option<String> {
+    App::dip721_name()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn set_name(name: String) {
-    App::set_name(name)
+pub fn dip721_set_name(name: String) {
+    App::dip721_set_name(name)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn symbol() -> Option<String> {
-    App::symbol()
+pub fn dip721_symbol() -> Option<String> {
+    App::dip721_symbol()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn set_symbol(symbol: String) {
-    App::set_symbol(symbol)
+pub fn dip721_set_symbol(symbol: String) {
+    App::dip721_set_symbol(symbol)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn custodians() -> Vec<Principal> {
-    App::custodians()
+pub fn dip721_custodians() -> Vec<Principal> {
+    App::dip721_custodians()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn set_custodians(custodians: Vec<Principal>) {
-    App::set_custodians(custodians)
+pub fn dip721_set_custodians(custodians: Vec<Principal>) {
+    App::dip721_set_custodians(custodians)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn cycles() -> Nat {
-    App::cycles()
+pub fn dip721_cycles() -> Nat {
+    App::dip721_cycles()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn total_unique_holders() -> Nat {
-    App::total_unique_holders()
+pub fn dip721_total_unique_holders() -> Nat {
+    App::dip721_total_unique_holders()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn token_metadata(
+pub fn dip721_token_metadata(
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<dip721_rs::TokenMetadata, dip721_rs::NftError> {
-    App::token_metadata(token_identifier)
+    App::dip721_token_metadata(token_identifier)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn balance_of(owner: Principal) -> Result<Nat, dip721_rs::NftError> {
-    App::balance_of(owner)
+pub fn dip721_balance_of(owner: Principal) -> Result<Nat, dip721_rs::NftError> {
+    App::dip721_balance_of(owner)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn owner_of(
+pub fn dip721_owner_of(
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<Option<Principal>, dip721_rs::NftError> {
-    App::owner_of(token_identifier)
+    App::dip721_owner_of(token_identifier)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn owner_token_identifiers(
+pub fn dip721_owner_token_identifiers(
     owner: Principal,
 ) -> Result<Vec<dip721_rs::TokenIdentifier>, dip721_rs::NftError> {
-    App::owner_token_identifiers(owner)
+    App::dip721_owner_token_identifiers(owner)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn owner_token_metadata(
+pub fn dip721_owner_token_metadata(
     owner: Principal,
 ) -> Result<Vec<dip721_rs::TokenMetadata>, dip721_rs::NftError> {
-    App::owner_token_metadata(owner)
+    App::dip721_owner_token_metadata(owner)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn operator_of(
+pub fn dip721_operator_of(
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<Option<Principal>, dip721_rs::NftError> {
-    App::operator_of(token_identifier)
+    App::dip721_operator_of(token_identifier)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn operator_token_identifiers(
+pub fn dip721_operator_token_identifiers(
     operator: Principal,
 ) -> Result<Vec<dip721_rs::TokenIdentifier>, dip721_rs::NftError> {
-    App::operator_token_identifiers(operator)
+    App::dip721_operator_token_identifiers(operator)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn operator_token_metadata(
+pub fn dip721_operator_token_metadata(
     operator: Principal,
 ) -> Result<Vec<dip721_rs::TokenMetadata>, dip721_rs::NftError> {
-    App::operator_token_metadata(operator)
+    App::dip721_operator_token_metadata(operator)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn supported_interfaces() -> Vec<dip721_rs::SupportedInterface> {
-    App::supported_interfaces()
+pub fn dip721_supported_interfaces() -> Vec<dip721_rs::SupportedInterface> {
+    App::dip721_supported_interfaces()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn total_supply() -> Nat {
-    App::total_supply()
+pub fn dip721_total_supply() -> Nat {
+    App::dip721_total_supply()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn approve(
+pub fn dip721_approve(
     spender: Principal,
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<dip721_rs::TokenIdentifier, dip721_rs::NftError> {
-    App::approve(spender, token_identifier)
+    App::dip721_approve(spender, token_identifier)
 }
 
 #[update]
 #[candid_method(update)]
-pub fn set_approval_for_all(
+pub fn dip721_set_approval_for_all(
     operator: Principal,
     approved: bool,
 ) -> Result<dip721_rs::TokenIdentifier, dip721_rs::NftError> {
-    App::set_approval_for_all(operator, approved)
+    App::dip721_set_approval_for_all(operator, approved)
 }
 
 #[update]
 #[candid_method(update)]
-pub fn is_approved_for_all(
+pub fn dip721_is_approved_for_all(
     owner: Principal,
     operator: Principal,
 ) -> Result<bool, dip721_rs::NftError> {
-    App::is_approved_for_all(owner, operator)
+    App::dip721_is_approved_for_all(owner, operator)
 }
 
 #[update]
 #[candid_method(update)]
-pub async fn transfer(
+pub async fn dip721_transfer(
     to: Principal,
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<Nat, dip721_rs::NftError> {
-    App::transfer(to, token_identifier).await
+    App::dip721_transfer(to, token_identifier).await
 }
 
 #[update]
 #[candid_method(update)]
-pub async fn transfer_from(
+pub async fn dip721_transfer_from(
     from: Principal,
     to: Principal,
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<Nat, dip721_rs::NftError> {
-    App::transfer_from(from, to, token_identifier).await
+    App::dip721_transfer_from(from, to, token_identifier).await
 }
 
 #[update]
 #[candid_method(update)]
-pub fn mint(
+pub fn dip721_mint(
     to: Principal,
     token_identifier: dip721_rs::TokenIdentifier,
     properties: Vec<(String, dip721_rs::GenericValue)>,
 ) -> Result<Nat, dip721_rs::NftError> {
-    App::mint(to, token_identifier, properties)
+    App::dip721_mint(to, token_identifier, properties)
 }
 
 #[update]
 #[candid_method(update)]
-pub fn burn(
+pub fn dip721_burn(
     token_identifier: dip721_rs::TokenIdentifier,
 ) -> Result<dip721_rs::TokenIdentifier, dip721_rs::NftError> {
-    App::burn(token_identifier)
+    App::dip721_burn(token_identifier)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn transaction(tx_id: Nat) -> Result<dip721_rs::TxEvent, dip721_rs::NftError> {
-    App::transaction(tx_id)
+pub fn dip721_transaction(tx_id: Nat) -> Result<dip721_rs::TxEvent, dip721_rs::NftError> {
+    App::dip721_transaction(tx_id)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn total_transactions() -> Nat {
-    App::total_transactions()
+pub fn dip721_total_transactions() -> Nat {
+    App::dip721_total_transactions()
 }
 
 #[allow(dead_code)]

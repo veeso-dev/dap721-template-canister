@@ -11,7 +11,7 @@ fn test_should_inspect_is_custodian() {
         .update::<()>(
             env.dip721_id,
             admin(),
-            "set_name",
+            "dip721_set_name",
             Encode!(&"test").unwrap()
         )
         .is_ok());
@@ -20,7 +20,7 @@ fn test_should_inspect_is_custodian() {
         .update::<()>(
             env.dip721_id,
             alice(),
-            "set_name",
+            "dip721_set_name",
             Encode!(&"test").unwrap()
         )
         .is_err());

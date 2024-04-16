@@ -61,35 +61,35 @@ impl App {
 #[async_trait]
 impl Dip721 for App {
     /// Returns the Metadata of the NFT canister which includes custodians, logo, name, symbol.
-    fn metadata() -> Metadata {
+    fn dip721_metadata() -> Metadata {
         Metadata {
             created_at: Configuration::get_created_at(),
-            custodians: Self::custodians(),
-            logo: Self::logo(),
-            name: Self::name(),
-            symbol: Self::symbol(),
+            custodians: Self::dip721_custodians(),
+            logo: Self::dip721_logo(),
+            name: Self::dip721_name(),
+            symbol: Self::dip721_symbol(),
             upgraded_at: Configuration::get_upgraded_at(),
         }
     }
 
     /// Returns the Stats of the NFT canister which includes cycles, totalSupply, totalTransactions, totalUniqueHolders.
-    fn stats() -> Stats {
+    fn dip721_stats() -> Stats {
         Stats {
-            cycles: Self::cycles(),
-            total_supply: Self::total_supply(),
-            total_transactions: Self::total_transactions(),
-            total_unique_holders: Self::total_unique_holders(),
+            cycles: Self::dip721_cycles(),
+            total_supply: Self::dip721_total_supply(),
+            total_transactions: Self::dip721_total_transactions(),
+            total_unique_holders: Self::dip721_total_unique_holders(),
         }
     }
 
     /// Returns the logo of the NFT contract as Base64 encoded text.
-    fn logo() -> Option<String> {
+    fn dip721_logo() -> Option<String> {
         Configuration::get_logo()
     }
 
     /// Sets the logo of the NFT canister. Base64 encoded text is recommended.
     /// Caller must be the custodian of NFT canister.
-    fn set_logo(logo: String) {
+    fn dip721_set_logo(logo: String) {
         if !Inspect::inspect_is_custodian(caller()) {
             ic_cdk::trap("Unauthorized");
         }
@@ -97,13 +97,13 @@ impl Dip721 for App {
     }
 
     /// Returns the name of the NFT canister.
-    fn name() -> Option<String> {
+    fn dip721_name() -> Option<String> {
         Configuration::get_name()
     }
 
     /// Sets the name of the NFT contract.
     /// Caller must be the custodian of NFT canister.
-    fn set_name(name: String) {
+    fn dip721_set_name(name: String) {
         if !Inspect::inspect_is_custodian(caller()) {
             ic_cdk::trap("Unauthorized");
         }
@@ -111,13 +111,13 @@ impl Dip721 for App {
     }
 
     /// Returns the symbol of the NFT contract.
-    fn symbol() -> Option<String> {
+    fn dip721_symbol() -> Option<String> {
         Configuration::get_symbol()
     }
 
     /// Set symbol
     /// Caller must be the custodian of NFT canister.
-    fn set_symbol(symbol: String) {
+    fn dip721_set_symbol(symbol: String) {
         if !Inspect::inspect_is_custodian(caller()) {
             ic_cdk::trap("Unauthorized");
         }
@@ -125,13 +125,13 @@ impl Dip721 for App {
     }
 
     /// Returns a list of the canister custodians
-    fn custodians() -> Vec<Principal> {
+    fn dip721_custodians() -> Vec<Principal> {
         Configuration::get_custodians()
     }
 
     /// Set canister custodians
     /// Caller must be the custodian of NFT canister.
-    fn set_custodians(custodians: Vec<Principal>) {
+    fn dip721_set_custodians(custodians: Vec<Principal>) {
         if !Inspect::inspect_is_custodian(caller()) {
             ic_cdk::trap("Unauthorized");
         }
@@ -139,23 +139,23 @@ impl Dip721 for App {
     }
 
     /// Returns canister cycles
-    fn cycles() -> Nat {
+    fn dip721_cycles() -> Nat {
         crate::utils::cycles()
     }
 
     /// Returns total unique holders of tokens
-    fn total_unique_holders() -> Nat {
+    fn dip721_total_unique_holders() -> Nat {
         TokensStorage::total_unique_holders().into()
     }
 
     /// Returns metadata for token
-    fn token_metadata(token_identifier: TokenIdentifier) -> Result<TokenMetadata, NftError> {
+    fn dip721_token_metadata(token_identifier: TokenIdentifier) -> Result<TokenMetadata, NftError> {
         TokensStorage::get_token(&token_identifier)
     }
 
     /// Returns the count of NFTs owned by user.
     /// If the user does not own any NFTs, returns an error containing NftError.
-    fn balance_of(owner: Principal) -> Result<Nat, NftError> {
+    fn dip721_balance_of(owner: Principal) -> Result<Nat, NftError> {
         match TokensStorage::tokens_by_owner(owner) {
             tokens if tokens.is_empty() => Err(NftError::OwnerNotFound),
             tokens => Ok(tokens.len().into()),
@@ -164,13 +164,13 @@ impl Dip721 for App {
 
     /// Returns the owner of the token.
     /// Returns an error containing NftError if token_identifier is invalid.
-    fn owner_of(token_identifier: TokenIdentifier) -> Result<Option<Principal>, NftError> {
+    fn dip721_owner_of(token_identifier: TokenIdentifier) -> Result<Option<Principal>, NftError> {
         TokensStorage::get_token(&token_identifier).map(|token| token.owner)
     }
 
     /// Returns the list of the token_identifier of the NFT associated with owner.
     /// Returns an error containing NftError if principal is invalid.
-    fn owner_token_identifiers(owner: Principal) -> Result<Vec<TokenIdentifier>, NftError> {
+    fn dip721_owner_token_identifiers(owner: Principal) -> Result<Vec<TokenIdentifier>, NftError> {
         match TokensStorage::tokens_by_owner(owner) {
             tokens if tokens.is_empty() => Err(NftError::OwnerNotFound),
             tokens => Ok(tokens),
@@ -179,11 +179,11 @@ impl Dip721 for App {
 
     /// Returns the list of the token_metadata of the NFT associated with owner.
     /// Returns an error containing NftError if principal is invalid.
-    fn owner_token_metadata(owner: Principal) -> Result<Vec<TokenMetadata>, NftError> {
-        let tokens = Self::owner_token_identifiers(owner)?;
+    fn dip721_owner_token_metadata(owner: Principal) -> Result<Vec<TokenMetadata>, NftError> {
+        let tokens = Self::dip721_owner_token_identifiers(owner)?;
         let mut metadata = Vec::with_capacity(tokens.len());
         for token in tokens {
-            metadata.push(Self::token_metadata(token)?);
+            metadata.push(Self::dip721_token_metadata(token)?);
         }
 
         if metadata.is_empty() {
@@ -194,12 +194,16 @@ impl Dip721 for App {
     }
 
     /// Returns the Principal of the operator of the NFT associated with token_identifier.
-    fn operator_of(token_identifier: TokenIdentifier) -> Result<Option<Principal>, NftError> {
+    fn dip721_operator_of(
+        token_identifier: TokenIdentifier,
+    ) -> Result<Option<Principal>, NftError> {
         TokensStorage::get_token(&token_identifier).map(|token| token.operator)
     }
 
     /// Returns the list of the token_identifier of the NFT associated with operator.
-    fn operator_token_identifiers(operator: Principal) -> Result<Vec<TokenIdentifier>, NftError> {
+    fn dip721_operator_token_identifiers(
+        operator: Principal,
+    ) -> Result<Vec<TokenIdentifier>, NftError> {
         match TokensStorage::tokens_by_operator(operator) {
             tokens if tokens.is_empty() => Err(NftError::OperatorNotFound),
             tokens => Ok(tokens),
@@ -207,11 +211,11 @@ impl Dip721 for App {
     }
 
     /// Returns the list of the token_metadata of the NFT associated with operator.
-    fn operator_token_metadata(operator: Principal) -> Result<Vec<TokenMetadata>, NftError> {
-        let tokens = Self::operator_token_identifiers(operator)?;
+    fn dip721_operator_token_metadata(operator: Principal) -> Result<Vec<TokenMetadata>, NftError> {
+        let tokens = Self::dip721_operator_token_identifiers(operator)?;
         let mut metadata = Vec::with_capacity(tokens.len());
         for token in tokens {
-            metadata.push(Self::token_metadata(token)?);
+            metadata.push(Self::dip721_token_metadata(token)?);
         }
 
         if metadata.is_empty() {
@@ -222,13 +226,13 @@ impl Dip721 for App {
     }
 
     /// Returns the list of the interfaces supported by this canister
-    fn supported_interfaces() -> Vec<SupportedInterface> {
+    fn dip721_supported_interfaces() -> Vec<SupportedInterface> {
         Configuration::get_supported_interfaces()
     }
 
     /// Returns the total supply of the NFT.
     /// NFTs that are minted and later burned explicitly or sent to the zero address should also count towards totalSupply.
-    fn total_supply() -> Nat {
+    fn dip721_total_supply() -> Nat {
         TokensStorage::total_supply().into()
     }
 
@@ -237,7 +241,10 @@ impl Dip721 for App {
     //
     // If the approval goes through, returns a nat that represents the CAP History transaction ID that can be used at the transaction method.
     /// Interface: approval
-    fn approve(operator: Principal, token_identifier: TokenIdentifier) -> Result<Nat, NftError> {
+    fn dip721_approve(
+        operator: Principal,
+        token_identifier: TokenIdentifier,
+    ) -> Result<Nat, NftError> {
         if !Inspect::inspect_is_owner(caller(), &token_identifier) {
             return Err(NftError::UnauthorizedOwner);
         }
@@ -253,9 +260,9 @@ impl Dip721 for App {
     /// Approvals granted by the approve function are independent from the approvals granted by setApprovalForAll function.
     /// If the approval goes through, returns a nat that represents the CAP History transaction ID that can be used at the transaction method.
     /// Interface: approval
-    fn set_approval_for_all(operator: Principal, approved: bool) -> Result<Nat, NftError> {
+    fn dip721_set_approval_for_all(operator: Principal, approved: bool) -> Result<Nat, NftError> {
         if Configuration::has_interface(SupportedInterface::Approval) {
-            let tokens_by_owner = Self::owner_token_identifiers(caller())?;
+            let tokens_by_owner = Self::dip721_owner_token_identifiers(caller())?;
             let mut tx_id = None;
             for token in tokens_by_owner {
                 if approved {
@@ -276,9 +283,9 @@ impl Dip721 for App {
 
     /// Returns true if the given operator is an approved operator for all the tokens owned by the caller through the use of the setApprovalForAll method, returns false otherwise.
     /// Interface: approval
-    fn is_approved_for_all(owner: Principal, operator: Principal) -> Result<bool, NftError> {
+    fn dip721_is_approved_for_all(owner: Principal, operator: Principal) -> Result<bool, NftError> {
         if Configuration::has_interface(SupportedInterface::Approval) {
-            for token in Self::owner_token_identifiers(owner)? {
+            for token in Self::dip721_owner_token_identifiers(owner)? {
                 let token = TokensStorage::get_token(&token)?;
                 if token.operator != Some(operator) {
                     return Ok(false);
@@ -293,8 +300,11 @@ impl Dip721 for App {
 
     /// Sends the callers nft token_identifier to `to`` and returns a nat that represents a
     /// transaction id that can be used at the transaction method.
-    async fn transfer(to: Principal, token_identifier: TokenIdentifier) -> Result<Nat, NftError> {
-        Self::transfer_from(caller(), to, token_identifier).await
+    async fn dip721_transfer(
+        to: Principal,
+        token_identifier: TokenIdentifier,
+    ) -> Result<Nat, NftError> {
+        Self::dip721_transfer_from(caller(), to, token_identifier).await
     }
 
     /// Caller of this method is able to transfer the NFT token_identifier that is in from's balance to to's balance
@@ -302,7 +312,7 @@ impl Dip721 for App {
     ///
     /// If the transfer goes through, returns a nat that represents the CAP History transaction ID
     /// that can be used at the transaction method.
-    async fn transfer_from(
+    async fn dip721_transfer_from(
         owner: Principal,
         to: Principal,
         token_identifier: TokenIdentifier,
@@ -321,7 +331,7 @@ impl Dip721 for App {
         TokensStorage::transfer(&token_identifier, to)
     }
 
-    fn mint(
+    fn dip721_mint(
         to: Principal,
         token_identifier: TokenIdentifier,
         properties: Vec<(String, GenericValue)>,
@@ -342,7 +352,7 @@ impl Dip721 for App {
     /// Implementations are encouraged to only allow burning by the owner of the token_identifier.
     ///
     /// The burn will also reduce the contract value by the token value
-    fn burn(token_identifier: TokenIdentifier) -> Result<Nat, NftError> {
+    fn dip721_burn(token_identifier: TokenIdentifier) -> Result<Nat, NftError> {
         Inspect::inspect_is_owner_or_operator(caller(), &token_identifier)?;
 
         if Configuration::has_interface(SupportedInterface::Burn) {
@@ -354,7 +364,7 @@ impl Dip721 for App {
 
     /// Returns the TxEvent that corresponds with tx_id.
     /// If there is no TxEvent that corresponds with the tx_id entered, returns a NftError.TxNotFound.
-    fn transaction(tx_id: Nat) -> Result<TxEvent, NftError> {
+    fn dip721_transaction(tx_id: Nat) -> Result<TxEvent, NftError> {
         if Configuration::has_interface(SupportedInterface::TransactionHistory) {
             match TxHistory::get_transaction_by_id(tx_id) {
                 Some(ev) => Ok(ev),
@@ -366,7 +376,7 @@ impl Dip721 for App {
     }
 
     /// Returns a nat that represents the total number of transactions that have occurred on the NFT canister.
-    fn total_transactions() -> Nat {
+    fn dip721_total_transactions() -> Nat {
         TxHistory::count().into()
     }
 }
@@ -386,7 +396,7 @@ mod test {
     fn test_should_init_canister() {
         init_canister();
 
-        assert_eq!(App::custodians(), vec![caller()]);
+        assert_eq!(App::dip721_custodians(), vec![caller()]);
         assert_eq!(Configuration::get_logo().as_deref(), Some("logo"));
         assert_eq!(Configuration::get_name().as_deref(), Some("nft"));
         assert_eq!(Configuration::get_symbol().as_deref(), Some("NFT"));
@@ -404,18 +414,18 @@ mod test {
     #[test]
     fn test_should_set_upgrade_time_on_post_upgrade() {
         init_canister();
-        let metadata: Metadata = App::metadata();
+        let metadata: Metadata = App::dip721_metadata();
         assert!(metadata.upgraded_at == metadata.created_at);
         std::thread::sleep(Duration::from_millis(100));
         App::post_upgrade();
-        let metadata = App::metadata();
+        let metadata = App::dip721_metadata();
         assert!(metadata.upgraded_at > metadata.created_at);
     }
 
     #[test]
     fn test_should_get_metadata() {
         init_canister();
-        let metadata = App::metadata();
+        let metadata = App::dip721_metadata();
         assert_eq!(metadata.custodians, vec![caller()]);
         assert_eq!(metadata.logo.as_deref(), Some("logo"));
         assert_eq!(metadata.name.as_deref(), Some("nft"));
@@ -425,7 +435,7 @@ mod test {
     #[test]
     fn test_should_get_stats() {
         init_canister();
-        let stats = App::stats();
+        let stats = App::dip721_stats();
         assert_eq!(stats.cycles, crate::utils::cycles());
         assert_eq!(stats.total_supply, 0_u64);
         assert_eq!(stats.total_transactions, 0_u64);
@@ -436,73 +446,73 @@ mod test {
     fn test_should_set_logo() {
         init_canister();
         let logo = "logo";
-        App::set_logo(logo.to_string());
-        assert_eq!(App::logo().as_deref(), Some(logo));
+        App::dip721_set_logo(logo.to_string());
+        assert_eq!(App::dip721_logo().as_deref(), Some(logo));
     }
 
     #[test]
     fn test_should_set_name() {
         init_canister();
         let name = "name";
-        App::set_name(name.to_string());
-        assert_eq!(App::name().as_deref(), Some(name));
+        App::dip721_set_name(name.to_string());
+        assert_eq!(App::dip721_name().as_deref(), Some(name));
     }
 
     #[test]
     fn test_should_set_symbol() {
         init_canister();
         let symbol = "symbol";
-        App::set_symbol(symbol.to_string());
-        assert_eq!(App::symbol().as_deref(), Some(symbol));
+        App::dip721_set_symbol(symbol.to_string());
+        assert_eq!(App::dip721_symbol().as_deref(), Some(symbol));
     }
 
     #[test]
     fn test_should_set_custodians() {
         init_canister();
         let custodians = vec![caller(), Principal::management_canister()];
-        App::set_custodians(custodians.clone());
-        assert_eq!(App::custodians().len(), custodians.len());
+        App::dip721_set_custodians(custodians.clone());
+        assert_eq!(App::dip721_custodians().len(), custodians.len());
     }
 
     #[test]
     fn test_should_get_cycles() {
         init_canister();
-        assert_eq!(App::cycles(), crate::utils::cycles());
+        assert_eq!(App::dip721_cycles(), crate::utils::cycles());
     }
 
     #[test]
     fn test_should_get_unique_holders() {
         init_canister();
         store_mock_token(1);
-        assert_eq!(App::total_unique_holders(), Nat::from(1_u64));
+        assert_eq!(App::dip721_total_unique_holders(), Nat::from(1_u64));
     }
 
     #[test]
     fn test_should_get_token_metadata() {
         init_canister();
         store_mock_token(1);
-        let metadata = App::token_metadata(1_u64.into()).unwrap();
+        let metadata = App::dip721_token_metadata(1_u64.into()).unwrap();
         assert_eq!(metadata.owner, Some(caller()));
         assert_eq!(metadata.token_identifier, Nat::from(1_u64));
 
         // unexisting token
-        assert!(App::token_metadata(5_u64.into()).is_err());
+        assert!(App::dip721_token_metadata(5_u64.into()).is_err());
     }
 
     #[test]
     fn test_should_get_balance_of() {
         init_canister();
         store_mock_token(1);
-        assert_eq!(App::balance_of(caller()).unwrap(), Nat::from(1_u64));
-        assert!(App::balance_of(Principal::management_canister()).is_err());
+        assert_eq!(App::dip721_balance_of(caller()).unwrap(), Nat::from(1_u64));
+        assert!(App::dip721_balance_of(Principal::management_canister()).is_err());
     }
 
     #[test]
     fn test_should_get_owner_of() {
         init_canister();
         store_mock_token(1);
-        assert_eq!(App::owner_of(1_u64.into()).unwrap(), Some(caller()));
-        assert!(App::owner_of(5_u64.into()).is_err());
+        assert_eq!(App::dip721_owner_of(1_u64.into()).unwrap(), Some(caller()));
+        assert!(App::dip721_owner_of(5_u64.into()).is_err());
     }
 
     #[test]
@@ -511,10 +521,10 @@ mod test {
         store_mock_token(1);
         store_mock_token(2);
         assert_eq!(
-            App::owner_token_identifiers(caller()).unwrap(),
+            App::dip721_owner_token_identifiers(caller()).unwrap(),
             vec![Nat::from(1_u64), Nat::from(2_u64)]
         );
-        assert!(App::owner_token_identifiers(Principal::management_canister()).is_err());
+        assert!(App::dip721_owner_token_identifiers(Principal::management_canister()).is_err());
     }
 
     #[test]
@@ -522,7 +532,7 @@ mod test {
         init_canister();
         store_mock_token(1);
         store_mock_token(2);
-        let metadata = App::owner_token_metadata(caller()).unwrap();
+        let metadata = App::dip721_owner_token_metadata(caller()).unwrap();
         assert_eq!(metadata.len(), 2);
         assert_eq!(metadata[0].owner, Some(caller()));
         assert_eq!(metadata[0].token_identifier, Nat::from(1_u64));
@@ -530,24 +540,24 @@ mod test {
         assert_eq!(metadata[1].token_identifier, Nat::from(2_u64));
 
         // unexisting owner
-        assert!(App::owner_token_metadata(Principal::management_canister()).is_err());
+        assert!(App::dip721_owner_token_metadata(Principal::management_canister()).is_err());
     }
 
     #[test]
     fn test_should_get_operator_of() {
         init_canister();
         store_mock_token(1);
-        assert_eq!(App::operator_of(1_u64.into()).unwrap(), None);
+        assert_eq!(App::dip721_operator_of(1_u64.into()).unwrap(), None);
         store_mock_token_with(2, |token| {
             token.operator = Some(Principal::management_canister())
         });
 
         assert_eq!(
-            App::operator_of(2_u64.into()).unwrap(),
+            App::dip721_operator_of(2_u64.into()).unwrap(),
             Some(Principal::management_canister())
         );
 
-        assert!(App::operator_of(5_u64.into()).is_err());
+        assert!(App::dip721_operator_of(5_u64.into()).is_err());
     }
 
     #[test]
@@ -557,17 +567,17 @@ mod test {
         store_mock_token_with(1, |token| {
             token.operator = None;
         });
-        assert!(App::operator_token_identifiers(caller()).is_err());
+        assert!(App::dip721_operator_token_identifiers(caller()).is_err());
 
         // with operator
         store_mock_token_with(2, |token| {
             token.operator = Some(Principal::management_canister())
         });
         assert_eq!(
-            App::operator_token_identifiers(Principal::management_canister()).unwrap(),
+            App::dip721_operator_token_identifiers(Principal::management_canister()).unwrap(),
             vec![Nat::from(2_u64)]
         );
-        assert!(App::operator_of(5_u64.into()).is_err());
+        assert!(App::dip721_operator_of(5_u64.into()).is_err());
     }
 
     #[test]
@@ -577,25 +587,26 @@ mod test {
         store_mock_token_with(1, |token| {
             token.operator = None;
         });
-        assert!(App::operator_token_metadata(caller()).is_err());
+        assert!(App::dip721_operator_token_metadata(caller()).is_err());
 
         // with operator
         store_mock_token_with(2, |token| {
             token.operator = Some(Principal::management_canister())
         });
-        let metadata = App::operator_token_metadata(Principal::management_canister()).unwrap();
+        let metadata =
+            App::dip721_operator_token_metadata(Principal::management_canister()).unwrap();
         assert_eq!(metadata.len(), 1);
         assert_eq!(metadata[0].owner, Some(caller()));
         assert_eq!(metadata[0].token_identifier, Nat::from(2_u64));
 
-        assert!(App::operator_of(5_u64.into()).is_err());
+        assert!(App::dip721_operator_of(5_u64.into()).is_err());
     }
 
     #[test]
     fn test_should_get_supported_interfaces() {
         init_canister();
         assert_eq!(
-            App::supported_interfaces(),
+            App::dip721_supported_interfaces(),
             vec![
                 SupportedInterface::Burn,
                 SupportedInterface::TransactionHistory,
@@ -610,7 +621,7 @@ mod test {
         init_canister();
         store_mock_token(1);
         store_mock_token(2);
-        assert_eq!(App::total_supply(), Nat::from(2_u64));
+        assert_eq!(App::dip721_total_supply(), Nat::from(2_u64));
     }
 
     #[tokio::test]
@@ -618,22 +629,22 @@ mod test {
         init_canister();
         store_mock_token(1);
         // self transfer
-        assert!(App::transfer(caller(), 1_u64.into()).await.is_err());
+        assert!(App::dip721_transfer(caller(), 1_u64.into()).await.is_err());
 
         // transfer
         assert!(
-            App::transfer(Principal::management_canister(), 1_u64.into())
+            App::dip721_transfer(Principal::management_canister(), 1_u64.into())
                 .await
                 .is_ok()
         );
-        assert!(App::balance_of(caller()).is_err());
+        assert!(App::dip721_balance_of(caller()).is_err());
         assert_eq!(
-            App::balance_of(Principal::management_canister()).unwrap(),
+            App::dip721_balance_of(Principal::management_canister()).unwrap(),
             Nat::from(1_u64)
         );
         // transfer unexisting
         assert!(
-            App::transfer(Principal::management_canister(), 5_u64.into())
+            App::dip721_transfer(Principal::management_canister(), 5_u64.into())
                 .await
                 .is_err()
         );
@@ -643,17 +654,17 @@ mod test {
     fn test_should_burn() {
         init_canister();
         store_mock_token(1);
-        assert!(App::burn(1_u64.into()).is_ok());
-        assert!(App::balance_of(caller()).is_err());
-        assert!(App::burn(1_u64.into()).is_err());
-        assert!(App::burn(5_u64.into()).is_err());
+        assert!(App::dip721_burn(1_u64.into()).is_ok());
+        assert!(App::dip721_balance_of(caller()).is_err());
+        assert!(App::dip721_burn(1_u64.into()).is_err());
+        assert!(App::dip721_burn(5_u64.into()).is_err());
     }
 
     #[test]
     fn test_should_approve() {
         init_canister();
         store_mock_token(1);
-        assert!(App::approve(bob(), 1_u64.into()).is_ok());
+        assert!(App::dip721_approve(bob(), 1_u64.into()).is_ok());
 
         let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
         assert_eq!(tokens_with_bob_as_op, vec![Nat::from(1_u64)]);
@@ -664,7 +675,7 @@ mod test {
         init_canister();
         store_mock_token(1);
         store_mock_token(2);
-        assert!(App::set_approval_for_all(bob(), true).is_ok());
+        assert!(App::dip721_set_approval_for_all(bob(), true).is_ok());
 
         let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
         assert_eq!(
@@ -672,7 +683,7 @@ mod test {
             vec![Nat::from(1_u64), Nat::from(2_u64)]
         );
 
-        assert!(App::set_approval_for_all(bob(), false).is_ok());
+        assert!(App::dip721_set_approval_for_all(bob(), false).is_ok());
 
         let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
         assert!(tokens_with_bob_as_op.is_empty());
@@ -683,28 +694,30 @@ mod test {
         init_canister();
         store_mock_token(1);
         store_mock_token(2);
-        assert!(App::set_approval_for_all(bob(), true).is_ok());
-        assert!(App::is_approved_for_all(caller(), bob()).unwrap());
-        assert!(!App::is_approved_for_all(caller(), Principal::management_canister()).unwrap());
+        assert!(App::dip721_set_approval_for_all(bob(), true).is_ok());
+        assert!(App::dip721_is_approved_for_all(caller(), bob()).unwrap());
+        assert!(
+            !App::dip721_is_approved_for_all(caller(), Principal::management_canister()).unwrap()
+        );
 
         store_mock_token(3);
-        assert!(!App::is_approved_for_all(caller(), bob()).unwrap());
+        assert!(!App::dip721_is_approved_for_all(caller(), bob()).unwrap());
     }
 
     #[test]
     fn test_should_get_tx() {
         init_canister();
-        assert!(App::transaction(Nat::from(1_u64)).is_err());
+        assert!(App::dip721_transaction(Nat::from(1_u64)).is_err());
         let id = TxHistory::register_token_mint(&mock_token(1));
-        assert!(App::transaction(id).is_ok());
+        assert!(App::dip721_transaction(id).is_ok());
     }
 
     #[test]
     fn test_should_get_total_transactions() {
         init_canister();
-        assert_eq!(App::total_transactions(), Nat::from(0_u64));
+        assert_eq!(App::dip721_total_transactions(), Nat::from(0_u64));
         let _ = TxHistory::register_token_mint(&mock_token(1));
-        assert_eq!(App::total_transactions(), Nat::from(1_u64));
+        assert_eq!(App::dip721_total_transactions(), Nat::from(1_u64));
     }
 
     #[test]
@@ -718,7 +731,7 @@ mod test {
         )
         .is_ok());
 
-        let metadata = App::token_metadata(1_u64.into()).unwrap();
+        let metadata = App::dip721_token_metadata(1_u64.into()).unwrap();
         assert_eq!(
             metadata.properties,
             vec![("key".to_string(), GenericValue::BoolContent(true))]

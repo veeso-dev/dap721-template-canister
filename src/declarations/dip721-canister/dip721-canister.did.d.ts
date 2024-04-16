@@ -53,11 +53,11 @@ export type Result_3 = { 'Ok' : Array<bigint> } |
   { 'Err' : NftError };
 export type Result_4 = { 'Ok' : Array<TokenMetadata> } |
   { 'Err' : NftError };
-export type Result_5 = { 'Ok' : null } |
+export type Result_5 = { 'Ok' : TokenMetadata } |
   { 'Err' : NftError };
-export type Result_6 = { 'Ok' : TokenMetadata } |
+export type Result_6 = { 'Ok' : TxEvent } |
   { 'Err' : NftError };
-export type Result_7 = { 'Ok' : TxEvent } |
+export type Result_7 = { 'Ok' : null } |
   { 'Err' : NftError };
 export interface Stats {
   'cycles' : bigint,
@@ -91,41 +91,41 @@ export interface TxEvent {
   'caller' : Principal,
 }
 export interface _SERVICE {
-  'approve' : ActorMethod<[Principal, bigint], Result>,
-  'balance_of' : ActorMethod<[Principal], Result>,
-  'burn' : ActorMethod<[bigint], Result>,
-  'custodians' : ActorMethod<[], Array<Principal>>,
-  'cycles' : ActorMethod<[], bigint>,
-  'is_approved_for_all' : ActorMethod<[Principal, Principal], Result_1>,
-  'logo' : ActorMethod<[], [] | [string]>,
-  'metadata' : ActorMethod<[], Metadata>,
-  'mint' : ActorMethod<
+  'dip721_approve' : ActorMethod<[Principal, bigint], Result>,
+  'dip721_balance_of' : ActorMethod<[Principal], Result>,
+  'dip721_burn' : ActorMethod<[bigint], Result>,
+  'dip721_custodians' : ActorMethod<[], Array<Principal>>,
+  'dip721_cycles' : ActorMethod<[], bigint>,
+  'dip721_is_approved_for_all' : ActorMethod<[Principal, Principal], Result_1>,
+  'dip721_logo' : ActorMethod<[], [] | [string]>,
+  'dip721_metadata' : ActorMethod<[], Metadata>,
+  'dip721_mint' : ActorMethod<
     [Principal, bigint, Array<[string, GenericValue]>],
     Result
   >,
-  'name' : ActorMethod<[], [] | [string]>,
-  'operator_of' : ActorMethod<[bigint], Result_2>,
-  'operator_token_identifiers' : ActorMethod<[Principal], Result_3>,
-  'operator_token_metadata' : ActorMethod<[Principal], Result_4>,
-  'owner_of' : ActorMethod<[bigint], Result_2>,
-  'owner_token_identifiers' : ActorMethod<[Principal], Result_3>,
-  'owner_token_metadata' : ActorMethod<[Principal], Result_4>,
-  'set_approval_for_all' : ActorMethod<[Principal, boolean], Result>,
-  'set_custodians' : ActorMethod<[Array<Principal>], undefined>,
-  'set_logo' : ActorMethod<[string], undefined>,
-  'set_name' : ActorMethod<[string], undefined>,
-  'set_symbol' : ActorMethod<[string], undefined>,
-  'set_token_property' : ActorMethod<[bigint, string, GenericValue], Result_5>,
-  'stats' : ActorMethod<[], Stats>,
-  'supported_interfaces' : ActorMethod<[], Array<SupportedInterface>>,
-  'symbol' : ActorMethod<[], [] | [string]>,
-  'token_metadata' : ActorMethod<[bigint], Result_6>,
-  'total_supply' : ActorMethod<[], bigint>,
-  'total_transactions' : ActorMethod<[], bigint>,
-  'total_unique_holders' : ActorMethod<[], bigint>,
-  'transaction' : ActorMethod<[bigint], Result_7>,
-  'transfer' : ActorMethod<[Principal, bigint], Result>,
-  'transfer_from' : ActorMethod<[Principal, Principal, bigint], Result>,
+  'dip721_name' : ActorMethod<[], [] | [string]>,
+  'dip721_operator_of' : ActorMethod<[bigint], Result_2>,
+  'dip721_operator_token_identifiers' : ActorMethod<[Principal], Result_3>,
+  'dip721_operator_token_metadata' : ActorMethod<[Principal], Result_4>,
+  'dip721_owner_of' : ActorMethod<[bigint], Result_2>,
+  'dip721_owner_token_identifiers' : ActorMethod<[Principal], Result_3>,
+  'dip721_owner_token_metadata' : ActorMethod<[Principal], Result_4>,
+  'dip721_set_approval_for_all' : ActorMethod<[Principal, boolean], Result>,
+  'dip721_set_custodians' : ActorMethod<[Array<Principal>], undefined>,
+  'dip721_set_logo' : ActorMethod<[string], undefined>,
+  'dip721_set_name' : ActorMethod<[string], undefined>,
+  'dip721_set_symbol' : ActorMethod<[string], undefined>,
+  'dip721_stats' : ActorMethod<[], Stats>,
+  'dip721_supported_interfaces' : ActorMethod<[], Array<SupportedInterface>>,
+  'dip721_symbol' : ActorMethod<[], [] | [string]>,
+  'dip721_token_metadata' : ActorMethod<[bigint], Result_5>,
+  'dip721_total_supply' : ActorMethod<[], bigint>,
+  'dip721_total_transactions' : ActorMethod<[], bigint>,
+  'dip721_total_unique_holders' : ActorMethod<[], bigint>,
+  'dip721_transaction' : ActorMethod<[bigint], Result_6>,
+  'dip721_transfer' : ActorMethod<[Principal, bigint], Result>,
+  'dip721_transfer_from' : ActorMethod<[Principal, Principal, bigint], Result>,
+  'set_token_property' : ActorMethod<[bigint, string, GenericValue], Result_7>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
-export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];
+export declare const init: ({ IDL }: { IDL: IDL }) => IDL.Type[];

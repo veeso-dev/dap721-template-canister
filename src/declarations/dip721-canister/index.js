@@ -10,7 +10,8 @@ export { idlFactory } from "./dip721-canister.did.js";
  * beginning in dfx 0.15.0
  */
 export const canisterId =
-  process.env.CANISTER_ID_DIP721-CANISTER;
+  process.env.CANISTER_ID_DIP721-CANISTER ||
+  process.env.DIP721-CANISTER_CANISTER_ID;
 
 export const createActor = (canisterId, options = {}) => {
   const agent = options.agent || new HttpAgent({ ...options.agentOptions });

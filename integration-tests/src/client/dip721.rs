@@ -21,7 +21,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "metadata",
+                "dip721_metadata",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")
@@ -29,13 +29,23 @@ impl<'a> Dip721Client<'a> {
 
     pub fn stats(&self) -> Stats {
         self.env
-            .query(self.env.dip721_id, alice(), "stats", Encode!(&()).unwrap())
+            .query(
+                self.env.dip721_id,
+                alice(),
+                "dip721_stats",
+                Encode!(&()).unwrap(),
+            )
             .expect("query failed")
     }
 
     pub fn logo(&self) -> Option<String> {
         self.env
-            .query(self.env.dip721_id, alice(), "logo", Encode!(&()).unwrap())
+            .query(
+                self.env.dip721_id,
+                alice(),
+                "dip721_logo",
+                Encode!(&()).unwrap(),
+            )
             .expect("query failed")
     }
 
@@ -44,7 +54,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "set_logo",
+                "dip721_set_logo",
                 Encode!(&logo).unwrap(),
             )
             .expect("update failed")
@@ -52,7 +62,12 @@ impl<'a> Dip721Client<'a> {
 
     pub fn name(&self) -> Option<String> {
         self.env
-            .query(self.env.dip721_id, alice(), "name", Encode!(&()).unwrap())
+            .query(
+                self.env.dip721_id,
+                alice(),
+                "dip721_name",
+                Encode!(&()).unwrap(),
+            )
             .expect("query failed")
     }
 
@@ -61,7 +76,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "set_name",
+                "dip721_set_name",
                 Encode!(&name).unwrap(),
             )
             .expect("update failed")
@@ -69,7 +84,12 @@ impl<'a> Dip721Client<'a> {
 
     pub fn symbol(&self) -> Option<String> {
         self.env
-            .query(self.env.dip721_id, alice(), "symbol", Encode!(&()).unwrap())
+            .query(
+                self.env.dip721_id,
+                alice(),
+                "dip721_symbol",
+                Encode!(&()).unwrap(),
+            )
             .expect("query failed")
     }
 
@@ -78,7 +98,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "set_symbol",
+                "dip721_set_symbol",
                 Encode!(&symbol).unwrap(),
             )
             .expect("update failed")
@@ -89,7 +109,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "custodians",
+                "dip721_custodians",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")
@@ -100,7 +120,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "set_custodians",
+                "dip721_set_custodians",
                 Encode!(&(custodians,)).unwrap(),
             )
             .expect("update failed")
@@ -108,7 +128,12 @@ impl<'a> Dip721Client<'a> {
 
     pub fn cycles(&self) -> Nat {
         self.env
-            .query(self.env.dip721_id, alice(), "cycles", Encode!(&()).unwrap())
+            .query(
+                self.env.dip721_id,
+                alice(),
+                "dip721_cycles",
+                Encode!(&()).unwrap(),
+            )
             .expect("query failed")
     }
 
@@ -117,7 +142,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "total_unique_holders",
+                "dip721_total_unique_holders",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")
@@ -131,7 +156,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "token_metadata",
+                "dip721_token_metadata",
                 Encode!(&token_identifier).unwrap(),
             )
             .expect("query failed")
@@ -142,7 +167,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "balance_of",
+                "dip721_balance_of",
                 Encode!(&owner).unwrap(),
             )
             .expect("query failed")
@@ -156,7 +181,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "owner_of",
+                "dip721_owner_of",
                 Encode!(&token_identifier).unwrap(),
             )
             .expect("query failed")
@@ -170,7 +195,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "owner_token_identifiers",
+                "dip721_owner_token_identifiers",
                 Encode!(&owner).unwrap(),
             )
             .expect("query failed")
@@ -181,7 +206,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "owner_token_metadata",
+                "dip721_owner_token_metadata",
                 Encode!(&owner).unwrap(),
             )
             .expect("query failed")
@@ -192,7 +217,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "operator_of",
+                "dip721_operator_of",
                 Encode!(&owner).unwrap(),
             )
             .expect("query failed")
@@ -206,7 +231,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "operator_token_identifiers",
+                "dip721_operator_token_identifiers",
                 Encode!(&operator).unwrap(),
             )
             .expect("query failed")
@@ -220,7 +245,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "operator_token_metadata",
+                "dip721_operator_token_metadata",
                 Encode!(&operator).unwrap(),
             )
             .expect("query failed")
@@ -231,7 +256,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "supported_interfaces",
+                "dip721_supported_interfaces",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")
@@ -242,7 +267,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "total_supply",
+                "dip721_total_supply",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")
@@ -258,7 +283,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "approve",
+                "dip721_approve",
                 Encode!(&operator, &token_identifier).unwrap(),
             )
             .expect("update failed")
@@ -274,7 +299,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "set_approval_for_all",
+                "dip721_set_approval_for_all",
                 Encode!(&(operator, approved)).unwrap(),
             )
             .expect("query failed")
@@ -289,7 +314,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "is_approved_for_all",
+                "dip721_is_approved_for_all",
                 Encode!(&(owner, operator)).unwrap(),
             )
             .expect("query failed")
@@ -305,7 +330,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "transfer",
+                "dip721_transfer",
                 Encode!(&to, &token_identifier).unwrap(),
             )
             .expect("query failed")
@@ -322,7 +347,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "transfer_from",
+                "dip721_transfer_from",
                 Encode!(&owner, &to, &token_identifier).unwrap(),
             )
             .expect("query failed")
@@ -339,7 +364,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "mint",
+                "dip721_mint",
                 Encode!(&to, &token_identifier, &properties).unwrap(),
             )
             .expect("query failed")
@@ -354,7 +379,7 @@ impl<'a> Dip721Client<'a> {
             .update(
                 self.env.dip721_id,
                 caller,
-                "burn",
+                "dip721_burn",
                 Encode!(&token_identifier).unwrap(),
             )
             .expect("query failed")
@@ -365,7 +390,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "transaction",
+                "dip721_transaction",
                 Encode!(&tx_id).unwrap(),
             )
             .expect("query failed")
@@ -376,7 +401,7 @@ impl<'a> Dip721Client<'a> {
             .query(
                 self.env.dip721_id,
                 alice(),
-                "total_transactions",
+                "dip721_total_transactions",
                 Encode!(&()).unwrap(),
             )
             .expect("query failed")

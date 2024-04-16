@@ -89,6 +89,7 @@ impl TokensStorage {
             token.owner = Some(to);
             token.transferred_at = Some(crate::utils::time());
             token.transferred_by = Some(crate::utils::caller());
+            token.operator = None;
 
             // register transfer
             let tx_id = TxHistory::register_transfer(token);
@@ -106,6 +107,7 @@ impl TokensStorage {
             }
             token.is_burned = true;
             token.owner = None;
+            token.operator = None;
             token.burned_at = Some(crate::utils::time());
             token.burned_by = Some(crate::utils::caller());
 

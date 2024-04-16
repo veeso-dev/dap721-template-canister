@@ -90,7 +90,7 @@ mod test {
             token.operator = Some(caller);
         });
         assert!(TokensStorage::transfer(&2_u64.into(), Principal::management_canister()).is_ok());
-        assert!(Inspect::inspect_is_owner_or_operator(caller, &2_u64.into()).is_ok());
+        assert!(Inspect::inspect_is_owner_or_operator(caller, &2_u64.into()).is_err());
 
         // no operator, no owner
         test_utils::store_mock_token_with(3, |token| {
@@ -114,7 +114,7 @@ mod test {
             token.operator = Some(caller);
         });
         assert!(TokensStorage::transfer(&2_u64.into(), Principal::management_canister()).is_ok());
-        assert!(Inspect::inspect_transfer_from(caller, &2_u64.into()).is_ok());
+        assert!(Inspect::inspect_transfer_from(caller, &2_u64.into()).is_err());
 
         // no operator, no owner
         test_utils::store_mock_token_with(3, |token| {
