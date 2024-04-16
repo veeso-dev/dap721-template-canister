@@ -19,8 +19,13 @@ deploy_dip721() {
     LOGO="\"$LOGO\""
   fi
 
+  SUPPORTED_INTERFACES=$(for interface in $SUPPORTED_INTERFACES; do echo -n "variant { $interface }; "; done)
+  echo "SUPPORTED_INTERFACES: $SUPPORTED_INTERFACES"
+  SUPPORTED_INTERFACES=${SUPPORTED_INTERFACES%; }
+  echo "SUPPORTED_INTERFACES: $SUPPORTED_INTERFACES"
+
   init_args="(record {
-    supported_interfaces = vec { $(for interface in $SUPPORTED_INTERFACES; do echo "variant { $interface }"; done) };
+    supported_interfaces = vec { $SUPPORTED_INTERFACES };
     custodians = vec { principal \"$ADMIN_PRINCIPAL\" };
     logo = $LOGO;
     name = \"$NAME\";
