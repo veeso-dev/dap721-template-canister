@@ -1,20 +1,16 @@
-[package]
-name = "dip721-canister"
+[workspace]
+members = ["integration-tests", "src/dip721_canister"]
+resolver = "2"
+
+[workspace.package]
 authors = ["Christian Visintin <christian.visintin@veeso.dev>"]
 edition = "2021"
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/veeso-dev/dip721-template-canister"
+repository = "https://github.com/EKOKEtoken/ekoke"
 version = "0.1.0"
 
-[[bin]]
-name = "dip721-canister-did"
-path = "src/lib.rs"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
+[workspace.dependencies]
 async-trait = "0.1"
 candid = "0.10"
 dip721-rs = "0.1"
@@ -27,14 +23,6 @@ num-bigint = "0.4"
 num-traits = "0.2"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1.0"
-
-[dev-dependencies]
-pretty_assertions = "1"
-tokio = { version = "1", features = ["full"] }
-
-[features]
-default = []
-did = []
 
 [profile.dev]
 debug = false

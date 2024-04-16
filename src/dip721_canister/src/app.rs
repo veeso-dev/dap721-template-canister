@@ -31,9 +31,11 @@ impl App {
     pub fn init(init_data: CanisterInitData) {
         Configuration::set_custodians(&init_data.custodians);
         Configuration::set_supported_interfaces(&init_data.supported_interfaces);
-        Configuration::set_logo(init_data.logo);
         Configuration::set_name(init_data.name);
         Configuration::set_symbol(init_data.symbol);
+        if let Some(logo) = init_data.logo {
+            Configuration::set_logo(logo);
+        }
     }
 
     /// Task to execute on post upgrade
@@ -732,7 +734,7 @@ mod test {
                 SupportedInterface::Mint,
                 SupportedInterface::Approval,
             ],
-            logo: "logo".to_string(),
+            logo: Some("logo".to_string()),
             name: "nft".to_string(),
             symbol: "NFT".to_string(),
         });

@@ -7,7 +7,7 @@ export const idlFactory = ({ IDL }) => {
     'TransactionHistory' : IDL.Null,
   });
   const CanisterInitData = IDL.Record({
-    'logo' : IDL.Opt(IDL.Text),
+    'logo' : IDL.Text,
     'name' : IDL.Text,
     'custodians' : IDL.Vec(IDL.Principal),
     'symbol' : IDL.Text,
@@ -169,7 +169,7 @@ export const init = ({ IDL }) => {
     'TransactionHistory' : IDL.Null,
   });
   const CanisterInitData = IDL.Record({
-    'logo' : IDL.Opt(IDL.Text),
+    'logo' : IDL.Text,
     'name' : IDL.Text,
     'custodians' : IDL.Vec(IDL.Principal),
     'symbol' : IDL.Text,

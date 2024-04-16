@@ -56,7 +56,7 @@ workspace = false
 
 [tasks.dip721-canister-did]
 description = "Generate did files for dip721-canister"
-script = "cargo run --bin dip721-canister-did  --features did > src/dip721-canister.did"
+script = "cargo run --bin dip721-canister-did  --features did > src/dip721_canister/dip721-canister.did"
 workspace = false
 
 [tasks.dfx-generate]

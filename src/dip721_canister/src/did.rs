@@ -6,7 +6,7 @@ use serde::Deserialize;
 pub struct CanisterInitData {
     pub custodians: Vec<Principal>,
     pub supported_interfaces: Vec<SupportedInterface>,
-    pub logo: String,
     pub name: String,
     pub symbol: String,
+    pub logo: Option<String>,
 }

@@ -1,8 +1,8 @@
 {
   "canisters": {
     "dip721-canister": {
-      "candid": "src/dip721-canister.did",
-      "package": "dip721-canister",
+      "candid": "src/dip721_canister/dip721-canister.did",
+      "package": "dip721_canister",
       "type": "rust"
     }
   },

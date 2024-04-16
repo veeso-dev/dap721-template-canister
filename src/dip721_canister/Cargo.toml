@@ -1,0 +1,36 @@
+[package]
+name = "dip721_canister"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+
+[[bin]]
+name = "dip721-canister-did"
+path = "src/lib.rs"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+async-trait = { workspace = true }
+candid = { workspace = true }
+dip721-rs = { workspace = true }
+getrandom = { workspace = true }
+ic-cdk = { workspace = true }
+ic-cdk-macros = { workspace = true }
+ic-stable-structures = { workspace = true }
+itertools = { workspace = true }
+num-bigint = { workspace = true }
+num-traits = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = "1"
+tokio = { version = "1", features = ["full"] }
+
+[features]
+default = []
+did = []

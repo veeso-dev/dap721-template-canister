@@ -3,7 +3,7 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface CanisterInitData {
-  'logo' : [] | [string],
+  'logo' : string,
   'name' : string,
   'custodians' : Array<Principal>,
   'symbol' : string,
