@@ -151,3 +151,150 @@ impl TokensStorage {
         Ok(tx_id)
     }
 }
+
+#[cfg(test)]
+mod test {
+
+    use crate::app::test_utils::{alice, bob, store_mock_token_with};
+
+    use super::*;
+
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn test_should_mint_token() {
+        let id = 1_u64;
+        let recipient = alice();
+        let properties = vec![("key".to_string(), GenericValue::Int64Content(1))];
+
+        let tx_id = TokensStorage::mint(recipient, id.into(), properties).unwrap();
+        assert_eq!(tx_id, 0u64);
+
+        // get token
+        let token = TokensStorage::get_token(&id.into()).unwrap();
+        assert_eq!(token.owner, Some(recipient));
+    }
+
+    #[test]
+    fn test_should_get_total_supply() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        store_mock_token_with(2u64, |token| {
+            token.owner = Some(alice());
+        });
+        store_mock_token_with(3u64, |token| {
+            token.owner = Some(bob());
+        });
+
+        assert_eq!(TokensStorage::total_supply(), 3);
+    }
+
+    #[test]
+    fn test_should_get_unique_holders() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        store_mock_token_with(2u64, |token| {
+            token.owner = Some(alice());
+        });
+        store_mock_token_with(3u64, |token| {
+            token.owner = Some(bob());
+        });
+
+        assert_eq!(TokensStorage::total_unique_holders(), 2);
+    }
+
+    #[test]
+    fn test_should_get_tokens_by_owner() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        store_mock_token_with(2u64, |token| {
+            token.owner = Some(bob());
+        });
+        store_mock_token_with(3u64, |token| {
+            token.owner = Some(alice());
+        });
+
+        assert_eq!(
+            TokensStorage::tokens_by_owner(alice()),
+            vec![TokenIdentifier::from(1_u64), TokenIdentifier::from(3_u64)]
+        );
+    }
+
+    #[test]
+    fn test_should_get_tokens_by_operator() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+            token.operator = Some(bob());
+        });
+        store_mock_token_with(2u64, |token| {
+            token.owner = Some(bob());
+        });
+        store_mock_token_with(3u64, |token| {
+            token.owner = Some(alice());
+        });
+
+        assert_eq!(
+            TokensStorage::tokens_by_operator(bob()),
+            vec![TokenIdentifier::from(1_u64)]
+        );
+    }
+
+    #[test]
+    fn test_should_set_token_property() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        assert!(TokensStorage::set_token_property(
+            &1_u64.into(),
+            "key".to_string(),
+            GenericValue::FloatContent(2.2)
+        )
+        .is_ok());
+        let token = TokensStorage::get_token(&1_u64.into()).unwrap();
+        assert_eq!(
+            token.properties,
+            vec![("key".to_string(), GenericValue::FloatContent(2.2))]
+        );
+    }
+
+    #[test]
+    fn test_should_burn_token() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        assert!(
+            TokensStorage::burn(&1u64.into()).is_ok(),
+            "Should burn token"
+        );
+        assert!(
+            TokensStorage::burn(&1u64.into()).is_err(),
+            "Should already be burned"
+        );
+    }
+
+    #[test]
+    fn test_should_transfer_token() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        assert!(
+            TokensStorage::transfer(&1u64.into(), bob()).is_ok(),
+            "Should transfer token"
+        );
+        let token = TokensStorage::get_token(&1u64.into()).unwrap();
+        assert_eq!(token.owner, Some(bob()));
+        assert!(token.transferred_at.is_some());
+        assert!(token.transferred_by.is_some());
+        assert!(
+            TokensStorage::burn(&1u64.into()).is_ok(),
+            "Should already be burned"
+        );
+        assert!(
+            TokensStorage::transfer(&1u64.into(), alice()).is_err(),
+            "Should not allow transfer of burned token"
+        );
+    }
+}

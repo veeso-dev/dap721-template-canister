@@ -467,7 +467,7 @@ mod test {
     fn test_should_get_balance_of() {
         init_canister();
         store_mock_token(1);
-        assert_eq!(App::balance_of(caller()).unwrap(), Nat::from(2_u64));
+        assert_eq!(App::balance_of(caller()).unwrap(), Nat::from(1_u64));
         assert!(App::balance_of(Principal::management_canister()).is_err());
     }
 
@@ -483,6 +483,7 @@ mod test {
     fn test_should_get_owner_token_identifiers() {
         init_canister();
         store_mock_token(1);
+        store_mock_token(2);
         assert_eq!(
             App::owner_token_identifiers(caller()).unwrap(),
             vec![Nat::from(1_u64), Nat::from(2_u64)]
@@ -494,6 +495,7 @@ mod test {
     fn test_should_get_owner_token_metadata() {
         init_canister();
         store_mock_token(1);
+        store_mock_token(2);
         let metadata = App::owner_token_metadata(caller()).unwrap();
         assert_eq!(metadata.len(), 2);
         assert_eq!(metadata[0].owner, Some(caller()));
@@ -515,7 +517,7 @@ mod test {
         });
 
         assert_eq!(
-            App::operator_of(3_u64.into()).unwrap(),
+            App::operator_of(2_u64.into()).unwrap(),
             Some(Principal::management_canister())
         );
 
@@ -537,7 +539,7 @@ mod test {
         });
         assert_eq!(
             App::operator_token_identifiers(Principal::management_canister()).unwrap(),
-            vec![Nat::from(3_u64), Nat::from(4_u64)]
+            vec![Nat::from(2_u64)]
         );
         assert!(App::operator_of(5_u64.into()).is_err());
     }
@@ -556,11 +558,9 @@ mod test {
             token.operator = Some(Principal::management_canister())
         });
         let metadata = App::operator_token_metadata(Principal::management_canister()).unwrap();
-        assert_eq!(metadata.len(), 2);
+        assert_eq!(metadata.len(), 1);
         assert_eq!(metadata[0].owner, Some(caller()));
-        assert_eq!(metadata[0].token_identifier, Nat::from(3_u64));
-        assert_eq!(metadata[1].owner, Some(caller()));
-        assert_eq!(metadata[1].token_identifier, Nat::from(4_u64));
+        assert_eq!(metadata[0].token_identifier, Nat::from(2_u64));
 
         assert!(App::operator_of(5_u64.into()).is_err());
     }
@@ -572,7 +572,9 @@ mod test {
             App::supported_interfaces(),
             vec![
                 SupportedInterface::Burn,
-                SupportedInterface::TransactionHistory
+                SupportedInterface::TransactionHistory,
+                SupportedInterface::Mint,
+                SupportedInterface::Approval,
             ]
         );
     }
@@ -582,7 +584,7 @@ mod test {
         init_canister();
         store_mock_token(1);
         store_mock_token(2);
-        assert_eq!(App::total_supply(), Nat::from(4_u64));
+        assert_eq!(App::total_supply(), Nat::from(2_u64));
     }
 
     #[tokio::test]
@@ -598,7 +600,7 @@ mod test {
                 .await
                 .is_ok()
         );
-        assert_eq!(App::balance_of(caller()).unwrap(), Nat::from(1_u64));
+        assert!(App::balance_of(caller()).is_err());
         assert_eq!(
             App::balance_of(Principal::management_canister()).unwrap(),
             Nat::from(1_u64)
@@ -616,8 +618,8 @@ mod test {
         init_canister();
         store_mock_token(1);
         assert!(App::burn(1_u64.into()).is_ok());
-        assert_eq!(App::balance_of(caller()).unwrap(), Nat::from(1_u64));
-
+        assert!(App::balance_of(caller()).is_err());
+        assert!(App::burn(1_u64.into()).is_err());
         assert!(App::burn(5_u64.into()).is_err());
     }
 
