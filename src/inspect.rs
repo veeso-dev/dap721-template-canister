@@ -26,6 +26,10 @@ fn inspect_message_impl() {
             let token_identifier = api::call::arg_data::<(Nat,)>().0;
             Inspect::inspect_is_owner_or_operator(caller(), &token_identifier).is_ok()
         }
+        "approve" => {
+            let (_operator, token_identifier) = api::call::arg_data::<(Principal, Nat)>();
+            Inspect::inspect_is_owner(caller(), &token_identifier)
+        }
         "transfer_from" => {
             let (_, _, token_identifier) = api::call::arg_data::<(Principal, Principal, Nat)>();
             Inspect::inspect_is_owner_or_operator(caller(), &token_identifier).is_ok()

@@ -236,8 +236,12 @@ impl Dip721 for App {
     // If the approval goes through, returns a nat that represents the CAP History transaction ID that can be used at the transaction method.
     /// Interface: approval
     fn approve(operator: Principal, token_identifier: TokenIdentifier) -> Result<Nat, NftError> {
+        if !Inspect::inspect_is_owner(caller(), &token_identifier) {
+            return Err(NftError::UnauthorizedOwner);
+        }
+
         if Configuration::has_interface(SupportedInterface::Approval) {
-            todo!();
+            TokensStorage::approve(operator, &token_identifier)
         } else {
             Err(NftError::Other("Not implemented".to_string()))
         }
@@ -249,7 +253,20 @@ impl Dip721 for App {
     /// Interface: approval
     fn set_approval_for_all(operator: Principal, approved: bool) -> Result<Nat, NftError> {
         if Configuration::has_interface(SupportedInterface::Approval) {
-            todo!();
+            let tokens_by_owner = Self::owner_token_identifiers(caller())?;
+            let mut tx_id = None;
+            for token in tokens_by_owner {
+                if approved {
+                    tx_id = Some(TokensStorage::approve(operator, &token)?);
+                } else {
+                    tx_id = Some(TokensStorage::revoke_approval(operator, &token)?);
+                }
+            }
+            if let Some(tx_id) = tx_id {
+                Ok(tx_id)
+            } else {
+                Err(NftError::TokenNotFound)
+            }
         } else {
             Err(NftError::Other("Not implemented".to_string()))
         }
@@ -259,7 +276,14 @@ impl Dip721 for App {
     /// Interface: approval
     fn is_approved_for_all(owner: Principal, operator: Principal) -> Result<bool, NftError> {
         if Configuration::has_interface(SupportedInterface::Approval) {
-            todo!();
+            for token in Self::owner_token_identifiers(owner)? {
+                let token = TokensStorage::get_token(&token)?;
+                if token.operator != Some(operator) {
+                    return Ok(false);
+                }
+            }
+
+            Ok(true)
         } else {
             Err(NftError::Other("Not implemented".to_string()))
         }
@@ -351,7 +375,7 @@ mod test {
     use std::time::Duration;
 
     use pretty_assertions::assert_eq;
-    use test::test_utils::{store_mock_token, store_mock_token_with};
+    use test::test_utils::{bob, store_mock_token, store_mock_token_with};
 
     use super::*;
     use crate::app::test_utils::mock_token;
@@ -621,6 +645,48 @@ mod test {
         assert!(App::balance_of(caller()).is_err());
         assert!(App::burn(1_u64.into()).is_err());
         assert!(App::burn(5_u64.into()).is_err());
+    }
+
+    #[test]
+    fn test_should_approve() {
+        init_canister();
+        store_mock_token(1);
+        assert!(App::approve(bob(), 1_u64.into()).is_ok());
+
+        let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
+        assert_eq!(tokens_with_bob_as_op, vec![Nat::from(1_u64)]);
+    }
+
+    #[test]
+    fn test_should_approve_for_all() {
+        init_canister();
+        store_mock_token(1);
+        store_mock_token(2);
+        assert!(App::set_approval_for_all(bob(), true).is_ok());
+
+        let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
+        assert_eq!(
+            tokens_with_bob_as_op,
+            vec![Nat::from(1_u64), Nat::from(2_u64)]
+        );
+
+        assert!(App::set_approval_for_all(bob(), false).is_ok());
+
+        let tokens_with_bob_as_op = TokensStorage::tokens_by_operator(bob());
+        assert!(tokens_with_bob_as_op.is_empty());
+    }
+
+    #[test]
+    fn test_should_tell_if_approved_for_all() {
+        init_canister();
+        store_mock_token(1);
+        store_mock_token(2);
+        assert!(App::set_approval_for_all(bob(), true).is_ok());
+        assert!(App::is_approved_for_all(caller(), bob()).unwrap());
+        assert!(!App::is_approved_for_all(caller(), Principal::management_canister()).unwrap());
+
+        store_mock_token(3);
+        assert!(!App::is_approved_for_all(caller(), bob()).unwrap());
     }
 
     #[test]

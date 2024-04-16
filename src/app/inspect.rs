@@ -15,6 +15,12 @@ impl Inspect {
         Configuration::is_custodian(caller)
     }
 
+    /// Returns whether caller is owner of the token
+    pub fn inspect_is_owner(caller: Principal, token_identifier: &Nat) -> bool {
+        let token = TokensStorage::get_token(token_identifier).unwrap();
+        token.owner == Some(caller)
+    }
+
     /// Returns whether caller is owner or operator of the token
     pub fn inspect_is_owner_or_operator(
         caller: Principal,

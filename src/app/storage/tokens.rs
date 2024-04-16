@@ -116,6 +116,36 @@ impl TokensStorage {
         })
     }
 
+    /// Approve operator for token
+    pub fn approve(operator: Principal, token_id: &TokenIdentifier) -> Result<Nat, NftError> {
+        with_token_mut(token_id, |token| {
+            token.approved_at = Some(crate::utils::time());
+            token.approved_by = Some(crate::utils::caller());
+            token.operator = Some(operator);
+
+            let tx_id = TxHistory::register_approve(token);
+
+            Ok(tx_id)
+        })
+    }
+
+    /// Remove approval for operator
+    pub fn revoke_approval(
+        operator: Principal,
+        token_id: &TokenIdentifier,
+    ) -> Result<Nat, NftError> {
+        with_token_mut(token_id, |token| {
+            if token.operator == Some(operator) {
+                token.approved_at = None;
+                token.approved_by = None;
+                token.operator = None;
+            }
+            let tx_id = TxHistory::register_approve(token);
+
+            Ok(tx_id)
+        })
+    }
+
     /// Mint a new token
     pub fn mint(
         to: Principal,
@@ -273,6 +303,40 @@ mod test {
             TokensStorage::burn(&1u64.into()).is_err(),
             "Should already be burned"
         );
+    }
+
+    #[test]
+    fn test_should_approve_token() {
+        store_mock_token_with(1_u64, |token| {
+            token.owner = Some(alice());
+        });
+        assert!(
+            TokensStorage::approve(bob(), &1u64.into()).is_ok(),
+            "Should approve token"
+        );
+        let token = TokensStorage::get_token(&1u64.into()).unwrap();
+        assert_eq!(token.operator, Some(bob()));
+        assert!(token.approved_at.is_some());
+        assert!(token.approved_by.is_some());
+
+        // disapprove, but with different operator
+
+        assert!(
+            TokensStorage::revoke_approval(Principal::management_canister(), &1u64.into()).is_ok(),
+            "Should revoke approval"
+        );
+        let token = TokensStorage::get_token(&1u64.into()).unwrap();
+        assert_eq!(token.operator, Some(bob()));
+
+        // revoke for bob
+        assert!(
+            TokensStorage::revoke_approval(bob(), &1u64.into()).is_ok(),
+            "Should revoke approval"
+        );
+        let token = TokensStorage::get_token(&1u64.into()).unwrap();
+        assert_eq!(token.operator, None);
+        assert!(token.approved_at.is_none());
+        assert!(token.approved_by.is_none());
     }
 
     #[test]
