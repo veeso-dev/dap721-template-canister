@@ -1,12 +1,13 @@
 //! # DIP721 canister
 
 use candid::{candid_method, Nat, Principal};
-use did::CanisterInitData;
+use did::{CanisterInitData, HttpRequest, HttpResponse};
 use dip721_rs::Dip721 as _;
 use ic_cdk_macros::{init, post_upgrade, query, update};
 
 mod app;
 pub mod did;
+mod http;
 mod inspect;
 mod storable;
 mod utils;
@@ -255,6 +256,13 @@ pub fn dip721_transaction(tx_id: Nat) -> Result<dip721_rs::TxEvent, dip721_rs::N
 #[candid_method(query)]
 pub fn dip721_total_transactions() -> Nat {
     App::dip721_total_transactions()
+}
+
+// HTTP endpoint
+#[query]
+#[candid_method(query)]
+pub async fn http_request(req: HttpRequest) -> HttpResponse {
+    http::HttpApi::handle_http_request(req).await
 }
 
 #[allow(dead_code)]

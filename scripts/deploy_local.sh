@@ -24,6 +24,6 @@ deploy_dip721 "reinstall" "local" "$ADMIN_PRINCIPAL" "$SUPPORTED_INTERFACES" "$N
 
 set +e
 
-dfx stop
+# dfx stop
 
 exit 0
